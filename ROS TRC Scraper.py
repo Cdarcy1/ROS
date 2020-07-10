@@ -14,14 +14,14 @@ linkElem = browser.find_element_by_link_text('Manage My Certificates') #navigate
 linkElem.click()
 time.sleep(2)
 browser.find_element_by_xpath('//*[@id="file"]').send_keys(os.getcwd()+'\TaxAgent.p12.bac') #Upload TaxAgent Cert
-password = pyip.inputPassword()
-browser.find_element_by_xpath('//*[@id="certFilePassword"]').send_keys(password) #Enter password, TODO make user prompt
+password = pyip.inputPassword() #Enter password as ****** 
+browser.find_element_by_xpath('//*[@id="certFilePassword"]').send_keys(password) 
 browser.find_element_by_xpath('//*[@id="submit_importFile"]').send_keys(Keys.ENTER)
 browser.find_element_by_xpath('/html/body/div[1]/div/div/div[2]/div[1]/div/div/div[2]/form/div[4]/div[1]/div/div[1]/a').send_keys(Keys.ENTER) #return to login
 time.sleep(3)
 
 #login
-browser.find_element_by_xpath('//*[@id="password"]').send_keys(password) #Enter password, TODO make user prompt
+browser.find_element_by_xpath('//*[@id="password"]').send_keys(password)
 browser.find_element_by_xpath('//*[@id="password"]').send_keys(Keys.ENTER)
 time.sleep(3)
 
