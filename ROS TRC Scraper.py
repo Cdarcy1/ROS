@@ -1,5 +1,5 @@
-import os, time, openpyxl, requests, autoit
-import pyinputplus as pyip
+import autoit, pyinputplus, openpyxl, time, tkinter
+from tkinter import filedialog
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
@@ -9,26 +9,33 @@ browser = webdriver.Firefox()
 browser.get('https://www.ros.ie')
 time.sleep(5)
 
-#upload certificate
-linkElem = browser.find_element_by_link_text('Manage My Certificates') #navigate to manage certificates
+#prompt for and upload certificate
+root = tkinter.Tk()
+root.filename = filedialog.askopenfilename(initialdir = "/", title = "Select ROS Digital Certificate", filetypes = [("", "*.p12.bac")])
+linkElem = browser.find_element_by_link_text('Manage My Certificates')
 linkElem.click()
 time.sleep(2)
-browser.find_element_by_xpath('//*[@id="file"]').send_keys(os.getcwd()+'\TaxAgent.p12.bac') #Upload TaxAgent Cert
-password = pyip.inputPassword() #Enter password as ****** 
-browser.find_element_by_xpath('//*[@id="certFilePassword"]').send_keys(password) 
+browser.find_element_by_xpath('//*[@id="file"]').send_keys(root.filename.replace("/", '\\'))
+
+#prompt for user password, program will crash if wrong password entered
+password = pyinputplus.inputPassword() #keeps password input secure
+browser.find_element_by_xpath('//*[@id="certFilePassword"]').send_keys(password)
 browser.find_element_by_xpath('//*[@id="submit_importFile"]').send_keys(Keys.ENTER)
 browser.find_element_by_xpath('/html/body/div[1]/div/div/div[2]/div[1]/div/div/div[2]/form/div[4]/div[1]/div/div[1]/a').send_keys(Keys.ENTER) #return to login
 time.sleep(3)
+
 
 #login
 browser.find_element_by_xpath('//*[@id="password"]').send_keys(password)
 browser.find_element_by_xpath('//*[@id="password"]').send_keys(Keys.ENTER)
 time.sleep(3)
 
-#main program loop
-wb = openpyxl.load_workbook('CompaniesList.xlsx') #open list of clients per ROS
+#prompt for client list (available as an export from ROS)
+root.filename = filedialog.askopenfilename(initialdir = "/", title = "Select Client List", filetypes = [("Excel", "*.xls*")])
+wb = openpyxl.load_workbook(root.filename)
 sheet = wb['Sheet1']
 
+#main program loop
 for x in range (1, sheet.max_row):
     time.sleep(7)
     companyName = sheet.cell(row=x,column=1).value
